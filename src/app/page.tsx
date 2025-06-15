@@ -27,7 +27,7 @@ const Tarefa: React.FC<TarefaProps> = ({ titulo, concluido }) => {
   };
 
   return (
-    <div className={classeCard} onClick={escutarClique}>
+    <div className={classeCard} onClick={() => escutarClique()}>
       <h3 className={`text-xl font-bold ${classeCorDoTexto}`}>{titulo}</h3>
       <p className={`text-sm ${classeCorDoTexto}`}>
         {estaConcluido ? "Concluída" : "Pendente"}
@@ -36,11 +36,11 @@ const Tarefa: React.FC<TarefaProps> = ({ titulo, concluido }) => {
   );
 };
 
-interface TarefasProps {
+interface TareafasProps {
   dados: TarefaInterface[];
 }
 
-const Tarefas: React.FC<TarefasProps> = ({ dados }) => {
+const Tarefas: React.FC<TareafasProps> = ({ dados }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {dados.map((tarefa) => (
@@ -60,7 +60,7 @@ const Home = () => {
 
   const adicionarTarefa = (titulo: string) => {
     const novaTarefa: TarefaInterface = {
-      id: tarefas.length + 1,
+      id: Date.now(),
       title: titulo,
       completed: false,
     };
@@ -70,20 +70,23 @@ const Home = () => {
   return (
     <div className="container mx-auto p-4">
       <Cabecalho />
-
-      <button
-        onClick={() => setMostrarModal(true)}
-        className="bg-green-500 text-white px-4 py-2 rounded mb-4"
-      >
-        Nova Tarefa
-      </button>
-
+      
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-amber-50">Minhas Tarefas</h1>
+        <button
+          onClick={() => setMostrarModal(true)}
+          className="px-4 py-2 bg-amber-500 text-gray-900 rounded-md hover:bg-amber-400 font-medium"
+        >
+          Adicionar Tarefa
+        </button>
+      </div>
+      
       <Tarefas dados={tarefas} />
 
       {mostrarModal && (
         <ModalTarefa
-          adicionarTarefa={adicionarTarefa}
-          fecharModal={() => setMostrarModal(false)}
+          onClose={() => setMostrarModal(false)}
+          onAdicionarTarefa={adicionarTarefa}
         />
       )}
     </div>

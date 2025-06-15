@@ -1,48 +1,81 @@
+"use client";
+
 import { useState } from "react";
 
 interface ModalTarefaProps {
-  adicionarTarefa: (titulo: string) => void;
-  fecharModal: () => void;
+  onClose: () => void;
+  onAdicionarTarefa: (titulo: string) => void;
 }
 
-const ModalTarefa: React.FC<ModalTarefaProps> = ({
-  adicionarTarefa,
-  fecharModal,
-}) => {
-  const [titulo, setTitulo] = useState("");
+const ModalTarefa: React.FC<ModalTarefaProps> = ({ onClose, onAdicionarTarefa }) => {
+  const [novaTarefa, setNovaTarefa] = useState("");
+  const [erro, setErro] = useState("");
 
-  const handleAdicionar = () => {
-    if (titulo.trim() !== "") {
-      adicionarTarefa(titulo);
-      setTitulo("");
-      fecharModal();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!novaTarefa.trim()) {
+      setErro("Por favor, insira um título para a tarefa");
+      return;
     }
+    
+    onAdicionarTarefa(novaTarefa);
+    setNovaTarefa("");
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-80">
-        <h2 className="text-xl mb-4">Nova Tarefa</h2>
-        <input
-          type="text"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-          placeholder="Digite a tarefa"
-          className="border w-full p-2 mb-4 rounded"
-        />
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={fecharModal}
-            className="bg-gray-400 text-white px-4 py-2 rounded"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleAdicionar}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Adicionar
-          </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-gray-700 rounded-lg shadow-xl w-full max-w-md">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-amber-50">Nova Tarefa</h2>
+            <button
+              onClick={onClose}
+              className="text-amber-50 hover:text-amber-200 focus:outline-none"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label htmlFor="tarefa" className="block text-sm font-medium text-amber-50 mb-1">
+                Título da Tarefa
+              </label>
+              <input
+                type="text"
+                id="tarefa"
+                value={novaTarefa}
+                onChange={(e) => {
+                  setNovaTarefa(e.target.value);
+                  setErro("");
+                }}
+                className="w-full px-3 py-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-600 text-amber-50"
+                placeholder="Digite o título da tarefa"
+                autoFocus
+              />
+              {erro && <p className="mt-1 text-sm text-red-400">{erro}</p>}
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-amber-50 bg-gray-600 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-sm font-medium text-gray-900 bg-amber-500 rounded-md hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                Adicionar
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
